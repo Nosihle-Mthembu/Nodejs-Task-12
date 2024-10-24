@@ -43,7 +43,27 @@ const server = http.createServer((req, res) => {
                 res.end(JSON.stringify({ message: 'Invalid option provided.' }));
             }
         });
-    } 
+    }else if (url === '/' && method === 'DELETE') {
+        // Handle DELETE request to "/"
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        req.on('end', () => {
+            const { option } = JSON.parse(body);
+            if (option === 'removal') {
+                res.writeHead(200);
+                res.end(JSON.stringify({ message: 'Successfully deleted!' }));
+            } else {
+                res.writeHead(400);
+                res.end(JSON.stringify({ message: 'Invalid option provided.' }));
+            }
+        });
+    } else {
+        // Handle invalid routes
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Route not found' }));
+    }
 });
 
 // Start the server on port 3000
