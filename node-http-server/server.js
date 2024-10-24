@@ -27,7 +27,23 @@ const server = http.createServer((req, res) => {
                 res.end(JSON.stringify({ message: 'Invalid option provided.' }));
             }
         });
-    }
+    } else if (url === '/' && method === 'POST') {
+        // Handle POST request to "/"
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        req.on('end', () => {
+            const { option } = JSON.parse(body);
+            if (option === 'posting') {
+                res.writeHead(201);
+                res.end(JSON.stringify({ message: 'Successfully created!' }));
+            } else {
+                res.writeHead(400);
+                res.end(JSON.stringify({ message: 'Invalid option provided.' }));
+            }
+        });
+    } 
 });
 
 // Start the server on port 3000
